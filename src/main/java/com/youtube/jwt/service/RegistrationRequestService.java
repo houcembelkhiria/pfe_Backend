@@ -13,13 +13,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 
@@ -36,7 +32,7 @@ public class RegistrationRequestService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private String apiKey="1e0acc9e464efa87b19182eeb64273d6-30344472-98d0f6fe";
+    private String apiKey="key-a7affd9242b71149fa5c509a6398841d";
 
     private String domain ="sandboxa4883417903f46b78cf1bf1b96d123dd.mailgun.org";
 
@@ -50,9 +46,8 @@ public class RegistrationRequestService {
     public RegistrationRequest saveRegistrationRequest(RegistrationRequest registrationRequest) {
         registrationRequestRepository.save(registrationRequest);
         RegistrationRequest savedRequest = registrationRequest;
-
         // Send email
-        String text = "hello i'm"+savedRequest.getFirstName() +" "+ savedRequest.getLastName() +" my cin is " + savedRequest.getCin() ;
+        String text = "hello i'm"+savedRequest.getUserFirstName() +" "+ savedRequest.getUserLastName() +" my cin is " + savedRequest.getUserName() ;
         String url = "https://api.mailgun.net/v3/" +domain+ "/messages";
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth("api", apiKey);
@@ -78,20 +73,25 @@ public class RegistrationRequestService {
 
 
 
-    public void deleteRegistrationRequest(Long cin) {
-        registrationRequestRepository.deleteById(cin.toString());
+    @DeleteMapping("/deleteRequest/{userName}")
+    public String deleteRegistrationRequest(@PathVariable("userName") String userName) {
+        registrationRequestRepository.deleteById(userName);
+        return "deleted with cin : " + userName;
     }
 
-    public User acceptRequest(RegistrationRequest registrationRequest){
+
+
+
+
+    /*public User acceptRequest(RegistrationRequest registrationRequest){
         User user = new User();
         String cin =registrationRequest.getCin().toString();
-
         user.setUserName(cin);
         user.setUserPassword(cin);
         user.setUserFirstName(registrationRequest.getFirstName());
         user.setUserLastName(registrationRequest.getLastName());
         userService.registerNewUser(user);
         return userService.registerNewUser(user);
-    }
+    }*/
 
 }

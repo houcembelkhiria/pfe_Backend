@@ -81,7 +81,7 @@ public class UserService {
         existingUser.setUserLastName(user.getUserLastName());
         existingUser.setUserPassword(getEncodedPassword(user.getUserPassword()));
         existingUser.setRole(user.getRole()); // update role field
-        return userDao.save(existingUser);
+        return userDao.save(existingUser);}
 /*
         Role role = new Role();
         role.setRoleName(role.getRoleName());
@@ -93,7 +93,7 @@ public class UserService {
         userRoles.add(role1);
         existingUser.setRole(userRoles); */
 
-    }
+
 
 
     @DeleteMapping("/delete/{userName}")
