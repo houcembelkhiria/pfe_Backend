@@ -1,9 +1,14 @@
 package com.youtube.jwt.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import com.youtube.jwt.dao.RoleDao;
 import com.youtube.jwt.dao.UserDao;
 import com.youtube.jwt.entity.JwtRequest;
@@ -11,10 +16,8 @@ import com.youtube.jwt.entity.JwtResponse;
 import com.youtube.jwt.entity.Role;
 import com.youtube.jwt.entity.User;
 import com.youtube.jwt.util.JwtUtil;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,20 +41,24 @@ public class JwtServiceTest {
 
     @Mock
     private UserDao userDao;
-
+    @Autowired
+    private UserService userService;
     @Mock
     private AuthenticationManager authenticationManager;
 
+
     @InjectMocks
     private JwtService jwtService;
-
+    @Autowired
+    private TestEntityManager entityManager;
     private User testUser;
     @Autowired
     private RoleDao roleDao;
     @Before
     public void setup() {
         Role testRole = new Role();
-        testRole.setRoleName("testRoleUser");        Set<Role> userRoles = new HashSet<>();
+        testRole.setRoleName("testRoleUser");
+        Set<Role> userRoles = new HashSet<>();
         userRoles.add(testRole);
         User testUser = new User();
         testUser.setUserName("12345678");
@@ -59,6 +66,7 @@ public class JwtServiceTest {
         testUser.setRole(userRoles);
         testUser.setUserPassword("testPassword");
         userDao.save(testUser);
+
     }
 
     @Test
@@ -88,40 +96,4 @@ public class JwtServiceTest {
             assert (e.getMessage().contains("INVALID_CREDENTIALS"));
         }
         verify(authenticationManager, times(3)).authenticate(any(UsernamePasswordAuthenticationToken.class));
-    }
-
-
- /*   @Test
-    public void testCreateJwtToken() throws Exception {
-        JwtRequest jwtRequest = new JwtRequest();
-        jwtRequest.setUserName("testuser");
-        jwtRequest.setUserPassword("testpassword");
-        when(userDao.findById(anyString())).thenReturn(Optional.of(testUser));
-        when(jwtUtil.generateToken(mock(UserDetails.class))).thenReturn("testtoken");
-
-        JwtResponse jwtResponse = jwtService.createJwtToken(jwtRequest);
-
-        assertEquals(testUser.getUserName(), jwtResponse.getUser().getUserName());
-        assertEquals("testtoken", jwtResponse.getJwtToken());
-    }*/
-/*
-    @Test(expected = UsernameNotFoundException.class)
-    public void testLoadUserByUsernameUserNotFound() {
-        when(userDao.findById(anyString())).thenReturn(Optional.empty());
-
-        jwtService.loadUserByUsername("nonexistentuser");
-    }
-
-    @Test
-    public void testLoadUserByUsername() {
-        when(userDao.findById(anyString())).thenReturn(Optional.of(testUser));
-
-        UserDetails userDetails = jwtService.loadUserByUsername("testuser");
-
-        assertEquals(testUser.getUserName(), userDetails.getUsername());
-        assertEquals(testUser.getUserPassword(), userDetails.getPassword());
-        assertEquals(1, userDetails.getAuthorities().size());
-        assertEquals("ROLE_USER", userDetails.getAuthorities().iterator().next().getAuthority());
-    }*/
-
-}
+    }}
