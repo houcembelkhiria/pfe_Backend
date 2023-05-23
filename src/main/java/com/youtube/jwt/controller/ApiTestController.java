@@ -141,25 +141,7 @@ public class ApiTestController {
         return collection;
     }
 
- /*   @GetMapping("/testResults")
-    public ResponseEntity<List<Document>> getTestResults() {
-        try {
-            MongoCollection<Document> collection = getMongoCollection(); // Replace with your own logic to get the collection
-            FindIterable<Document> results = collection.find();
-            List<Document> resultList = new ArrayList<>();
-
-            for (Document result : results) {
-                resultList.add(result);
-            }
-
-            return ResponseEntity.ok(resultList);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.emptyList());
-        }
-    }
-
-*/
+ 
 
 
     @GetMapping("/testResults")
